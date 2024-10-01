@@ -1,11 +1,10 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Scanner;
 
 public class Yahtzee {
     private int numPlayers;
     private ArrayList<Player> players; // List to hold players
+    private int rounds = 13;
 
     // Constructor to initialize the game with a specific number of players
     public Yahtzee(int numPlayers) {
@@ -22,26 +21,37 @@ public class Yahtzee {
     }
 
     // Method to handle the rolling of dice for determining player order
-    public void rollForOrder() {
+    private void rollForOrder() {
         System.out.println("Please roll for playing order (Type 'roll'):");
         Scanner scanner = new Scanner(System.in);
         for (Player player : players) {
             System.out.println(player.getName() + " roll:");
-            String input = scanner.nextLine();  // User types 'roll'
+            String input = scanner.nextLine();
             if (input.equalsIgnoreCase("roll")) {
-                int roll = Dice.roll(); // Use Dice class to roll
+                int roll = Dice.roll();
                 player.setRollValue(roll);
                 System.out.println(player.getName() + " rolled a " + roll);
             } else {
                 System.out.println("Invalid input. Type 'roll' to roll.");
             }
         }
-        Collections.sort(players, Comparator.comparingInt(Player::getRollValue).reversed());
+        sortPlayersByRollValue();
         System.out.println("Players sorted by roll:");
         for (Player player : players) {
             System.out.println(player.getName() + ": " + player.getRollValue());
         }
-        scanner.close();
+    }
+
+    private void sortPlayersByRollValue() {
+        for (int i = 0; i < players.size() - 1; i++) {
+            for (int j = 0; j < players.size() - 1 - i; j++) {
+                if (players.get(j).getRollValue() < players.get(j + 1).getRollValue()) {
+                    Player temp = players.get(j);
+                    players.set(j, players.get(j + 1));
+                    players.set(j + 1, temp);
+                }
+            }
+        }
     }
 
     // Method to start the game
