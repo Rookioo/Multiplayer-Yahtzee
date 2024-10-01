@@ -1,5 +1,17 @@
+/**
+ * YahtzeeScoring.java
+ * 
+ * Purpose: This class Handles all of the scoring based on the Yahtzee rules through a switch statement.
+ * Author: Dustin Anderson
+ * Date: 2024-09-30
+ */
+
 public class YahtzeeScoring {
-    // Method to score based on the chosen category
+    /**
+     * Method description: This method takes the categoryIndex 0-12 and looks into that case along with the dice value and gives a score based on the users selected case.
+     * @param categoryIndex An int that is the index the player selected as their Yahtzee category
+     * @param dice An array of integers of the dice for scoring purposes
+     */
     public int scoreCategory(int categoryIndex, int[] dice) {
         switch (categoryIndex) {
             case 0: return scoreOnes(dice);
@@ -19,7 +31,11 @@ public class YahtzeeScoring {
         }
     }
 
-    // Scoring Methods
+    /**
+     * METHOD DESCRIPTIONS: ALL of the bellow methods match up to a case within the scoreCategory() method and based on a dice value give a score to the user for that category
+     * @param dice An array of dice to be compared to the value for the category
+     * @return countDice(dice, 1) Linked to a method that then returns the value of the true score value of the dice
+     */
     private int scoreOnes(int[] dice) {
         return countDice(dice, 1);
     }
@@ -109,8 +125,14 @@ public class YahtzeeScoring {
     private int scoreChance(int[] dice) {
         return sumArray(dice); // Sum of all dice
     }
+    
 
-    // Helper Methods
+    /**
+     * Method Description: This method is crutial for counting the number of dice of a specific value for categories like "Ones" or "Twos"
+     * @param dice An array of dice to be compared to the desired value
+     * @param value An integer value the dice is compared to for additional count (points)
+     * @return the integer count of all the points gained from the comparison
+     */
     private int countDice(int[] dice, int value) {
         int count = 0;
         for (int die : dice) {
@@ -121,6 +143,11 @@ public class YahtzeeScoring {
         return count;
     }
 
+    /**
+     * Method Description: This method rather than counting a single value like countDice counts multiple values at the same time
+     * @param dice An array of dice to be compared to the desired values
+     * @return the integer count of all the points gained from the comparison
+     */
     private int[] countDiceOccurrences(int[] dice) {
         int[] counts = new int[7]; // Index 0 unused
         for (int die : dice) {
@@ -129,6 +156,11 @@ public class YahtzeeScoring {
         return counts;
     }
 
+    /**
+     * Method Description: This method is used for just adding up the total score of all the categories for methods like chance
+     * @param array An array of values which it adds to the total
+     * @return total The total value added from all array items
+     */
     private int sumArray(int[] array) {
         int total = 0;
         for (int value : array) {
@@ -137,10 +169,21 @@ public class YahtzeeScoring {
         return total;
     }
 
+    /**
+     * Note: Uses a new part of java for me the .stream I discovered when searching up easy ways to remove duplicates
+     * Method Description: Removes duplicates from the given array of dice
+     * @param dice An array of integers that are dice getting deduplicated
+     */
     private int[] removeDuplicates(int[] dice) {
         return java.util.Arrays.stream(dice).distinct().toArray();
     }
 
+    /**
+     * Method Description: This method allows for checking if an array is equal to a subarray which is used in a variety of the odd case categories
+     * @param array One array of integers to be compared
+     * @param array Another ray of integers to be compared too
+     * @return bool returns true if if all elements match but if any elements from the subarray are missing in the array it returns false
+     */
     private boolean containsAll(int[] array, int[] subArray) {
         for (int value : subArray) {
             boolean found = false;

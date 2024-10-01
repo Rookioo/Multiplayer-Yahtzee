@@ -1,3 +1,11 @@
+/**
+ * Yahtzee.java
+ * 
+ * Purpose: This class handles the dice and their simple feature of rolling for a random number 1-6.
+ * Author: Dustin Anderson
+ * Date: 2024-09-30
+ */
+
 public class Dice {
     // Method to roll a dice and return the value
     public static int roll() {

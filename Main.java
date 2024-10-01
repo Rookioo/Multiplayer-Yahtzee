@@ -1,6 +1,13 @@
+/**
+ * Main.java
+ * 
+ * Purpose: The Main class containing a small portion of starting up the Yahtzee game and getting the number of players.
+ * Author: Dustin Anderson
+ * Date: 2024-09-30
+ */
+
 import java.util.Scanner;
 
-// The Main class containing all of the general game starting features with rolling for play order
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);

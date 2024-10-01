@@ -1,5 +1,14 @@
+/**
+ * Yahtzee.java
+ * 
+ * Purpose: This class handles the in game loop and a majority of user interactions.
+ * Author: Dustin Anderson
+ * Date: 2024-09-30
+ */
+
 import java.util.ArrayList;
 import java.util.Scanner;
+
 
 public class Yahtzee {
     private int numPlayers;
@@ -9,7 +18,10 @@ public class Yahtzee {
     private YahtzeeScoring scoring; // Instance of YahtzeeScoring
     Scanner scanner = new Scanner(System.in);
 
-    // Constructor to initialize the game with a specific number of players
+    /**
+     * Method description: This method creates the public Yahtzee gameobject.
+     * @param numPlayers An integer representing the number of players.
+     */
     public Yahtzee(int numPlayers) {
         this.numPlayers = numPlayers;
         this.players = new ArrayList<>();
@@ -18,14 +30,18 @@ public class Yahtzee {
         initializePlayers(); // Initialize player objects
     }
 
-    // Method to initialize players
+    /**
+     * Method description: This method initilizes the players based on the previous numPlayers value.
+     */
     private void initializePlayers() {
         for (int i = 0; i < numPlayers; i++) {
             players.add(new Player("Player " + (i + 1)));
         }
     }
 
-    // Method to handle the rolling of dice for determining player order by number (Not traditional around the circle)
+    /**
+     * Method description: This method allows the players to roll for their playing order and sorts them.
+     */
     private void rollForOrder() {
         System.out.println("Please roll for playing order (Type 'r'):");
         for (Player player : players) {
@@ -51,7 +67,9 @@ public class Yahtzee {
         }
     }
 
-    // Simple sorting algorithm to sort the roll values of starting players
+    /**
+     * Method description: Simple sorting algorithm for sorting the players by their roll value and sets them in the array in order.
+     */
     private void sortPlayersByRollValue() {
         for (int i = 0; i < players.size() - 1; i++) {
             for (int j = 0; j < players.size() - 1 - i; j++) {
@@ -64,14 +82,18 @@ public class Yahtzee {
         }
     }
 
-    // Method to start the game
+    /**
+     * Method description: This method starts the game
+     */
     public void startGame() {
         System.out.println("\nStarting the game with " + numPlayers + (numPlayers > 1 ? " players" : " player"));
         rollForOrder(); // Roll dice for order
         playGame(); // Playing the game
     }
 
-    // Method for playing each round
+    /**
+     * Method description: This method loops the turns for each player and when it is done determines the winner of the game
+     */
     private void playGame() {
         for (int round = 1; round <= rounds; round++) {
             System.out.println("\nRound " + round);
@@ -83,6 +105,12 @@ public class Yahtzee {
         determineWinner();
     }
 
+
+    /**
+     * Method description: This method handles all the logic behind rolling, rerolling, and locking dice so the player can play traditional Yahtzee.
+     * @param player The Player object that is currently playing their turn.
+     * @param playerIndex The index of the player within the current list of Player objects.
+     */
     private void playTurn(Player player, int playerIndex) {
         System.out.println(player.getName() + "'s turn:");
         int[] dice = Dice.rollMultiple(5);
@@ -146,7 +174,12 @@ public class Yahtzee {
         }
     }
     
-    
+    /**
+     * Method description: This method displays the dice to the player with spaces for easy readability and shows which dice you decided to keep so it could help the player
+     * more visually.
+     * @param dice An array of the rolled dice.
+     * @param keptDice An array of the dice that were kept since last turn.
+     */
     private void displayDice(int[] dice, boolean[] keptDice) {
         System.out.print("You rolled: ");
         for (int i = 0; i < dice.length; i++) {
@@ -159,6 +192,12 @@ public class Yahtzee {
         System.out.println();
     }
 
+    /**
+     * Method description: This method rerolls the dice if the dice aren't within the keptDice array
+     * @param dice An array of the rolled dice.
+     * @param keptDice An array of the dice that were kept since last turn.
+     * @return dice returns the dice array after it has been rerolled
+     */
     private int[] reRollDice(int[] dice, boolean[] keptDice) {
         for (int i = 0; i < dice.length; i++) {
             if (!keptDice[i]) {
@@ -168,6 +207,10 @@ public class Yahtzee {
         return dice;
     }
 
+    /**
+     * Method description: This method shows the winner by totalling up the scores and displaying the results
+     * more visually.
+     */
     private void determineWinner() {
         Player winner = players.get(0);
         for (Player player : players) {
@@ -178,6 +221,11 @@ public class Yahtzee {
         System.out.println("The winner is " + winner.getName() + " with " + winner.getTotalScore() + " points!");
     }
 
+    /**
+     * Method description: This method gets the category name based on the input index for the predefined array that interacts within YahtzeeScoring.java
+     * @param index An integer with the index
+     * @return categories The string of the category at the given index. Ex: index = 5 => "Fives"
+     */
     private String getCategoryName(int index) {
         String[] categories = {
             "Ones", "Twos", "Threes", "Fours", "Fives", "Sixes",
