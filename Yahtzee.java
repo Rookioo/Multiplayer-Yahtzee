@@ -5,11 +5,16 @@ public class Yahtzee {
     private int numPlayers;
     private ArrayList<Player> players; // List to hold players
     private int rounds = 13;
+    private boolean[][] scored; // To track which categories are scored
+    private YahtzeeScoring scoring; // Instance of YahtzeeScoring
+    Scanner scanner = new Scanner(System.in);
 
     // Constructor to initialize the game with a specific number of players
     public Yahtzee(int numPlayers) {
         this.numPlayers = numPlayers;
         this.players = new ArrayList<>();
+        this.scored = new boolean[numPlayers][13]; // 13 scoring categories
+        this.scoring = new YahtzeeScoring(); // Initilize the scoring instance
         initializePlayers(); // Initialize player objects
     }
 
@@ -23,7 +28,6 @@ public class Yahtzee {
     // Method to handle the rolling of dice for determining player order by number (Not traditional around the circle)
     private void rollForOrder() {
         System.out.println("Please roll for playing order (Type 'r'):");
-        Scanner scanner = new Scanner(System.in);
         for (Player player : players) {
             boolean validInput = false; // tracking if the input is correct
 
@@ -71,45 +75,77 @@ public class Yahtzee {
     private void playGame() {
         for (int round = 1; round <= rounds; round++) {
             System.out.println("\nRound " + round);
-            for (Player player : players) {
-                playTurn(player);
-                displayScores();
+            for (int i = 0; i < players.size(); i++) {
+                playTurn(players.get(i), i); // Pass player index for scoring
             }
         }
         // Determines the winner after the full round cycles are done
         determineWinner();
     }
 
-    // Method for players dice management
-    private void playTurn(Player player) {
+    private void playTurn(Player player, int playerIndex) {
         System.out.println(player.getName() + "'s turn:");
         int[] dice = Dice.rollMultiple(5);
         boolean[] keptDice = new boolean[5];
-        int reRolls = 2;
-
-        for (int roll = 0; roll < 3; roll++) {
+        int reRolls = 2; // Maximum re-rolls
+        int remainingReRolls = reRolls; // Track remaining re-rolls
+    
+        while (remainingReRolls >= 0) {
             displayDice(dice, keptDice);
-            if (roll < reRolls) {
+    
+            if (remainingReRolls > 0) {
+                System.out.println("You have " + remainingReRolls + " re-roll(s) remaining.");
                 System.out.println("Select dice to keep (e.g., 1 3), or type 'r' to re-roll all:");
                 Scanner scanner = new Scanner(System.in);
                 String input = scanner.nextLine();
+    
                 if (input.equals("r")) {
-                    break;
+                    // Re-roll all dice
+                    dice = Dice.rollMultiple(5);
+                    keptDice = new boolean[5]; // Reset kept dice
+                } else {
+                    // Update kept dice based on user input
+                    String[] selections = input.split(" ");
+                    for (String selection : selections) {
+                        int index = Integer.parseInt(selection) - 1; // Convert to 0-based index
+                        keptDice[index] = true;
+                    }
+                    // Re-roll the non-kept dice
+                    dice = reRollDice(dice, keptDice);
                 }
-                String[] selections = input.split(" ");
-                for (String selection : selections) {
-                    int index = Integer.parseInt(selection) - 1;
-                    keptDice[index] = true;
+            } else {
+                System.out.println("No more re-rolls remaining.");
+            }
+    
+            remainingReRolls--; // Decrease the count of remaining re-rolls
+        }
+    
+        // Scoring category selection
+        boolean validChoice = false;
+        while (!validChoice) {
+            System.out.println("Choose scoring category (1-13):");
+            for (int i = 0; i < 13; i++) {
+                if (!scored[playerIndex][i]) {
+                    System.out.println((i + 1) + ". " + getCategoryName(i));
                 }
-                dice = reRollDice(dice, keptDice);
             }
             
+            Scanner scanner = new Scanner(System.in);
+            int categoryChoice = scanner.nextInt() - 1; // Adjusting for 0-based index
+            if (categoryChoice >= 0 && categoryChoice < 13 && !scored[playerIndex][categoryChoice]) {
+                int score = scoring.scoreCategory(categoryChoice, dice);
+                if (score != -1) {
+                    player.addScore(score);
+                    scored[playerIndex][categoryChoice] = true; // Mark category as scored
+                    System.out.println(player.getName() + " scored " + score + " points in " + getCategoryName(categoryChoice));
+                    validChoice = true; // Exit the loop
+                }
+            } else {
+                System.out.println("Invalid choice or category already scored. Please select again.");
+            }
         }
-
-        int score = scoreDice(dice);
-        player.addScore(score);
-        System.out.println(player.getName() + " scored " + score + " points.");
     }
+    
     
     private void displayDice(int[] dice, boolean[] keptDice) {
         System.out.print("You rolled: ");
@@ -132,21 +168,6 @@ public class Yahtzee {
         return dice;
     }
 
-    private int scoreDice(int[] dice) {
-        int total = 0;
-        for (int die : dice) {
-            total += die;
-        }
-        return total;
-    }
-
-    private void displayScores() {
-        System.out.println("Current Scores:");
-        for (Player player : players) {
-            System.out.println(player.getName() + ": " + player.getTotalScore() + " points");
-        }
-    }
-
     private void determineWinner() {
         Player winner = players.get(0);
         for (Player player : players) {
@@ -157,5 +178,12 @@ public class Yahtzee {
         System.out.println("The winner is " + winner.getName() + " with " + winner.getTotalScore() + " points!");
     }
 
-    
+    private String getCategoryName(int index) {
+        String[] categories = {
+            "Ones", "Twos", "Threes", "Fours", "Fives", "Sixes",
+            "Three of a Kind", "Four of a Kind", "Full House",
+            "Small Straight", "Large Straight", "Yahtzee", "Chance"
+        };
+        return categories[index];
+    }
 }
