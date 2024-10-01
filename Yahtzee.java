@@ -91,7 +91,8 @@ public class Yahtzee {
             displayDice(dice, keptDice);
             if (roll < reRolls) {
                 System.out.println("Select dice to keep (e.g., 1 3), or type 'r' to re-roll all:");
-                String input = new Scanner(System.in).nextLine();
+                Scanner scanner = new Scanner(System.in);
+                String input = scanner.nextLine();
                 if (input.equals("r")) {
                     break;
                 }
@@ -102,6 +103,7 @@ public class Yahtzee {
                 }
                 dice = reRollDice(dice, keptDice);
             }
+            
         }
 
         int score = scoreDice(dice);
