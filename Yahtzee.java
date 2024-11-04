@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class Yahtzee {
     private int numPlayers;
     private ArrayList<Player> players; // List to hold players
-    private int rounds = 13;
+    private int rounds = 15;
     private boolean[][] scored; // To track which categories are scored
     private YahtzeeScoring scoring; // Instance of YahtzeeScoring
     Scanner scanner = new Scanner(System.in);
@@ -25,7 +25,7 @@ public class Yahtzee {
     public Yahtzee(int numPlayers) {
         this.numPlayers = numPlayers;
         this.players = new ArrayList<>();
-        this.scored = new boolean[numPlayers][13]; // 13 scoring categories
+        this.scored = new boolean[numPlayers][15]; // 15 scoring categories
         this.scoring = new YahtzeeScoring(); // Initilize the scoring instance
         initializePlayers(); // Initialize player objects
     }
@@ -113,8 +113,8 @@ public class Yahtzee {
      */
     private void playTurn(Player player, int playerIndex) {
         System.out.println(player.getName() + "'s turn:");
-        int[] dice = Dice.rollMultiple(5);
-        boolean[] keptDice = new boolean[5];
+        int[] dice = Dice.rollMultiple(6);
+        boolean[] keptDice = new boolean[6];
         int reRolls = 2; // Maximum re-rolls
         int remainingReRolls = reRolls; // Track remaining re-rolls
     
@@ -129,8 +129,8 @@ public class Yahtzee {
     
                 if (input.equals("r")) {
                     // Re-roll all dice
-                    dice = Dice.rollMultiple(5);
-                    keptDice = new boolean[5]; // Reset kept dice
+                    dice = Dice.rollMultiple(6);
+                    keptDice = new boolean[6]; // Reset kept dice
                 } else {
                     // Update kept dice based on user input
                     String[] selections = input.split(" ");
@@ -151,8 +151,8 @@ public class Yahtzee {
         // Scoring category selection
         boolean validChoice = false;
         while (!validChoice) {
-            System.out.println("Choose scoring category (1-13):");
-            for (int i = 0; i < 13; i++) {
+            System.out.println("Choose scoring category (1-15):");
+            for (int i = 0; i < 15; i++) {
                 if (!scored[playerIndex][i]) {
                     System.out.println((i + 1) + ". " + getCategoryName(i));
                 }
@@ -160,7 +160,7 @@ public class Yahtzee {
             
             Scanner scanner = new Scanner(System.in);
             int categoryChoice = scanner.nextInt() - 1; // Adjusting for 0-based index
-            if (categoryChoice >= 0 && categoryChoice < 13 && !scored[playerIndex][categoryChoice]) {
+            if (categoryChoice >= 0 && categoryChoice < 15 && !scored[playerIndex][categoryChoice]) {
                 int score = scoring.scoreCategory(categoryChoice, dice);
                 if (score != -1) {
                     player.addScore(score);
@@ -228,9 +228,9 @@ public class Yahtzee {
      */
     private String getCategoryName(int index) {
         String[] categories = {
-            "Ones", "Twos", "Threes", "Fours", "Fives", "Sixes",
+            "Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", "Split",
             "Three of a Kind", "Four of a Kind", "Full House",
-            "Small Straight", "Large Straight", "Yahtzee", "Chance"
+            "Small Straight", "Large Straight", "Giant Straight", "Yahtzee", "Six of a Kind", "Chance"
         };
         return categories[index];
     }

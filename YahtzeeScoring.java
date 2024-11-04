@@ -20,13 +20,16 @@ public class YahtzeeScoring {
             case 3: return scoreFours(dice);
             case 4: return scoreFives(dice);
             case 5: return scoreSixes(dice);
-            case 6: return scoreThreeOfAKind(dice);
-            case 7: return scoreFourOfAKind(dice);
-            case 8: return scoreFullHouse(dice);
-            case 9: return scoreSmallStraight(dice);
-            case 10: return scoreLargeStraight(dice);
-            case 11: return scoreYahtzee(dice);
-            case 12: return scoreChance(dice);
+            case 6: return scoreSplit(dice);
+            case 7: return scoreThreeOfAKind(dice);
+            case 8: return scoreFourOfAKind(dice);
+            case 9: return scoreFullHouse(dice);
+            case 10: return scoreSmallStraight(dice);
+            case 11: return scoreLargeStraight(dice);
+            case 12: return scoreGiantStraight(dice);
+            case 13: return scoreYahtzee(dice);
+            case 14: return scoreSixOfAKind(dice);
+            case 15: return scoreChance(dice);
             default: return -1; // Invalid category
         }
     }
@@ -58,6 +61,28 @@ public class YahtzeeScoring {
 
     private int scoreSixes(int[] dice) {
         return countDice(dice, 6) * 6;
+    }
+
+    private int scoreSplit(int[] dice) {
+        int[] counts = countDiceOccurrences(dice);
+        boolean hasThreeOfFirst = false;
+        boolean hasThreeOfSecond = false;
+
+        for (int count : counts) {
+            if (count == 3) {
+                if (!hasThreeOfFirst) {
+                    hasThreeOfFirst = true; // Found the first three
+                } else if (!hasThreeOfSecond) {
+                    hasThreeOfSecond = true; // FOund the second three
+                }
+            }
+        }
+
+        if (hasThreeOfFirst && hasThreeOfSecond) {
+            return 50;
+        } else {
+            return 0;
+        }
     }
 
     private int scoreThreeOfAKind(int[] dice) {
@@ -112,11 +137,30 @@ public class YahtzeeScoring {
         return largeStraightFound ? 40 : 0; // Large Straight score
     }
 
+    private int scoreGiantStraight(int[] dice) {
+        int[] uniqueDice = removeDuplicates(dice);
+        boolean giantStraightFound = false;
+        if (containsAll(uniqueDice, new int[]{1, 2, 3, 4, 5, 6})) {
+            giantStraightFound = true;
+        }
+        return giantStraightFound ? 80 : 0; // Giant Straight score
+    }
+
     private int scoreYahtzee(int[] dice) {
         int[] counts = countDiceOccurrences(dice);
         for (int count : counts) {
             if (count == 5) {
                 return 50; // Yahtzee score
+            }
+        }
+        return 0; // Not a valid score
+    }
+
+    private int scoreSixOfAKind(int[] dice) {
+        int[] counts = countDiceOccurrences(dice);
+        for (int count : counts) {
+            if (count == 6) {
+                return 100; // Six of a kind score
             }
         }
         return 0; // Not a valid score

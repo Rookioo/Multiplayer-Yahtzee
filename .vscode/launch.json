@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "Multiplayer-Yahtzee_4dea30c5"
+        },
+        {
+            "type": "java",
             "name": "Yahtzee",
             "request": "launch",
             "mainClass": "Yahtzee",
