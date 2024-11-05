@@ -123,7 +123,7 @@ public class Yahtzee {
     
             if (remainingReRolls > 0) {
                 System.out.println("You have " + remainingReRolls + " re-roll(s) remaining.");
-                System.out.println("Select dice to keep (e.g., 1 3), or type 'r' to re-roll all:");
+                System.out.println("Select dice to keep (e.g., 1 3), type 'r' to re-roll all, or type 'd' for DEBUG manual input:");
                 Scanner scanner = new Scanner(System.in);
                 String input = scanner.nextLine();
     
@@ -131,6 +131,13 @@ public class Yahtzee {
                     // Re-roll all dice
                     dice = Dice.rollMultiple(6);
                     keptDice = new boolean[6]; // Reset kept dice
+                } else if (input.equals("d")) {
+                    // Debug mode: Enter specific dice values
+                    System.out.println("DEBUG: Enter 6 dice values (e.g., '1 2 3 4 5 6'):");
+                    String[] debugValues = scanner.nextLine().split(" ");
+                    for (int i = 0; i < 6 && i < debugValues.length; i++) {
+                        dice[i] = Integer.parseInt(debugValues[i]);
+                    }
                 } else {
                     // Update kept dice based on user input
                     String[] selections = input.split(" ");
